@@ -1,0 +1,112 @@
+// rainbow game of life created by: john h conway
+
+// bidimensional board of cells (1 or 0)
+// 1 = alive
+// 0 = dead
+
+// rules:
+// A. any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
+// B. any live cell with two or three live neighbours lives on to the next generation.
+// C. any live cell with more than four live neighbours dies, as if by overpopulation.
+// D. any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+
+// 1. any live cell with two or three live neighbours survives.
+// 2. any dead cell with three live neighbours becomes a live cell.
+// 3. all other live cells die in the next generation. similarly, all other dead cells stay dead.
+
+// new live cells must have the arithmetical average of the immediate neighbours
+// board must be floating point
+
+// board NxN with infinite boundaries
+// (0,0) is the upper left corner and (N-1,N-1) is the lower right corner
+// live cell has value greater than 0.0
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+#include <unistd.h>
+
+#define board_size 100
+#define number_of_iterations 100
+
+void allocate_board(float ***grid);
+void initialize_board(float **grid);
+int get_neighbors(float **grid, int i, int j);
+
+int main()
+{
+    float **grid, **newgrid;
+    allocate_board(&grid);
+    allocate_board(&newgrid);
+
+    initialize_board(grid);
+    
+    execute_iterations(grid, newgrid, number_of_iterations);
+
+    compute_live_cells(grid);
+
+    free_board(grid);
+    free_board(newgrid);
+
+    return 0;
+}
+
+// function to allocate board
+void allocate_board(float ***grid)
+{
+    // allocate memory for the board
+    *grid = (float **)malloc(board_size * sizeof(float *));
+    for (int i = 0; i < board_size; i++)
+    {
+        (*grid)[i] = (float *)malloc(board_size * sizeof(float));
+    }
+}
+
+void free_board(float **grid)
+{
+    // free memory for the board
+    for (int i = 0; i < board_size; i++)
+    {
+        free(grid[i]);
+    }
+    free(grid);
+}
+
+// function to initialize board
+void initialize_board(float **grid)
+{
+    // initialize the board from position (1,1) with glider pattern
+    // and a R-pentomino pattern in (10, 30)
+    grid[1][2] = 1.0;
+    grid[2][3] = 1.0;
+    grid[3][1] = 1.0;
+    grid[3][2] = 1.0;
+    grid[3][3] = 1.0;
+
+    grid[10][31] = 1.0;
+    grid[10][32] = 1.0;
+    grid[11][30] = 1.0;
+    grid[11][31] = 1.0;
+    grid[12][31] = 1.0;
+}
+
+int get_neighbors(float **grid, int i, int j)
+{
+    int neighbors = 0;
+    for (int k = i - 1; k <= i + 1; k++)
+    {
+        for (int l = j - 1; l <= j + 1; l++)
+        {
+            if (k == i && l == j)
+            {
+                continue;
+            }
+            if (grid[k][l] > 0.0)
+            {
+                neighbors++;
+            }
+        }
+    }
+    return neighbors;
+}
