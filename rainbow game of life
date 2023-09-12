@@ -284,6 +284,8 @@ int get_neighbors(float **grid, int i, int j)
         // check if the cell is in the upper border
         if (i == 0)
         {
+
+            /* ESTE FOR ESTA COM ERRO!!!! causa do segmenation fault
             for (int k = i; k <= i + 1; k++)
             {
                 for (int l = j - 1; l <= j + 1; l++)
@@ -298,6 +300,7 @@ int get_neighbors(float **grid, int i, int j)
                     }
                 }
             }
+            */
             if (grid[board_size - 1][j - 1] > 0.0)
             {
                 neighbors++;
@@ -310,6 +313,7 @@ int get_neighbors(float **grid, int i, int j)
             {
                 neighbors++;
             }
+            
             return neighbors;
         }
         //check if the cell is in the right corner
