@@ -27,8 +27,8 @@
 #include <math.h>
 #include <unistd.h>
 
-#define board_size 100
-#define number_of_iterations 100
+#define board_size 2048
+#define number_of_iterations 2000
 
 void allocate_board(float ***grid);
 void free_board(float **grid);
@@ -37,8 +37,8 @@ int get_neighbors(float **grid, int i, int j);
 void execute_iterations(float **grid, float **newgrid, int iterations);
 void compute_live_cells(float **grid);
 
-int main()
-{
+int main(int argc, char **argv)
+{   
     float **grid, **newgrid;
     allocate_board(&grid);
     allocate_board(&newgrid);
@@ -47,6 +47,7 @@ int main()
     
     execute_iterations(grid, newgrid, number_of_iterations);
 
+    printf("final board:\n");
     compute_live_cells(grid);
 
     free_board(grid);
@@ -116,7 +117,50 @@ int get_neighbors(float **grid, int i, int j)
 
 void execute_iterations(float **grid , float **newgrid, int iterations)
 {
-
+    for(int i = 0; i < iterations; i++)
+    {
+        for(int j = 1; j < board_size - 1; j++)
+        {
+            for(int k = 1; k < board_size - 1; k++)
+            {
+                int neighbors = get_neighbors(grid, j, k);
+                if(grid[j][k] > 0.0)
+                {
+                    if(neighbors == 2 || neighbors == 3)
+                    {
+                        newgrid[j][k] = grid[j][k];
+                    }
+                    else
+                    {
+                        newgrid[j][k] = 0.0;
+                    }
+                }
+                else
+                {
+                    if(neighbors == 3)
+                    {
+                        newgrid[j][k] = (grid[j-1][k-1] + grid[j-1][k] + grid[j-1][k+1] + grid[j][k-1] + grid[j][k+1] + grid[j+1][k-1] + grid[j+1][k] + grid[j+1][k+1]) / 8.0;
+                    }
+                    else
+                    {
+                        newgrid[j][k] = 0.0;
+                    }
+                }
+            }
+        }
+        // copy newgrid to grid
+        for(int j = 1; j < board_size - 1; j++)
+        {
+            for(int k = 1; k < board_size - 1; k++)
+            {
+                grid[j][k] = newgrid[j][k];
+            }
+        }
+        // print board
+        printf("iteration: %d\n", i);
+        compute_live_cells(grid);
+        //sleep(1);
+    }
 }
 
 void compute_live_cells(float **grid)
