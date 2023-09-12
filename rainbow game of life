@@ -31,8 +31,11 @@
 #define number_of_iterations 100
 
 void allocate_board(float ***grid);
+void free_board(float **grid);
 void initialize_board(float **grid);
 int get_neighbors(float **grid, int i, int j);
+void execute_iterations(float **grid, float **newgrid, int iterations);
+void compute_live_cells(float **grid);
 
 int main()
 {
@@ -110,3 +113,44 @@ int get_neighbors(float **grid, int i, int j)
     }
     return neighbors;
 }
+
+void execute_iterations(float **grid , float **newgrid, int iterations)
+{
+
+}
+
+void compute_live_cells(float **grid)
+{
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
