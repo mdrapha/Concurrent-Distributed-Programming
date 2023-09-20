@@ -286,7 +286,7 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
         grid = newgrid;
         newgrid = temp;
 
-        if(iterations < 5)
+        if(i < 5)
         {
             show_50_50_grid(grid);
         }
