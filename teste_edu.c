@@ -26,6 +26,7 @@
 #include <time.h>
 #include <math.h>
 #include <unistd.h>
+#include <time.h>
 
 #define board_size 2048
 #define number_of_iterations 2000
@@ -45,8 +46,15 @@ int main(int argc, char **argv)
     newgrid = allocate_board();
     initialize_board(grid);
 
+    clock_t start_time = clock(); // initialize clock
+
     execute_iterations(grid, newgrid, number_of_iterations);
     compute_live_cells(grid);
+
+    clock_t end_time = clock();
+
+    double execution_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    printf("Tempo de execucao: %.5f segundos\n", execution_time);
 
     free_board(grid);
     free_board(newgrid);
@@ -236,8 +244,32 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
         printf("iteration: %d ", i);
         compute_live_cells(grid);
         
+        if (iterations < 5)
+        {
+            show_50_50_grid(grid);
+        }
     }
     compute_live_cells(grid);
+}
+
+void show_50_50_grid(float **grid)
+{
+    for(int i = 0; i < board_size; i++)
+    {
+        for(int j = 0; j < board_size; j++)
+        {
+            if (grid[i][j] > 0.0)
+            {
+                printf("1 ");
+            }
+            else
+            {
+                printf("0 ");
+            }
+        }
+        printf("\n");
+    }
+    printf("\n");
 }
 
 void compute_live_cells(float **grid)
