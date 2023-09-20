@@ -26,12 +26,14 @@
 #include <time.h>
 #include <math.h>
 #include <unistd.h>
+
 // Including OpenMP for parallelization
 #include <omp.h>
 
 #define board_size 2048
 #define number_of_iterations 2000
 
+// function declarations
 float** allocate_board();
 void free_board(float **grid);
 void initialize_board(float **grid);
@@ -39,24 +41,28 @@ void execute_iterations(float **grid, float **newgrid, int iterations);
 void compute_live_cells(float **grid);
 int get_neighbors(float **grid, int i, int j);
 
-
 int main(int argc, char **argv)
 {   
     omp_set_nested(1);
-    float **grid, **newgrid;
-    double begin, end;
-    begin = omp_get_wtime();
-    grid = allocate_board();
-    newgrid = allocate_board();
-    initialize_board(grid);
 
-    execute_iterations(grid, newgrid, number_of_iterations);
-    compute_live_cells(grid);
+    float **grid, **newgrid; // board and new board
+    double begin, end; // time variables
 
-    free_board(grid);
-    free_board(newgrid);
-    end = omp_get_wtime();
-    printf("time: %f\n", end - begin);
+    begin = omp_get_wtime(); // get time
+
+    grid = allocate_board(); // allocate board 
+    newgrid = allocate_board(); // allocate new board
+
+    initialize_board(grid); // initialize board
+
+    execute_iterations(grid, newgrid, number_of_iterations); // execute iterations
+    compute_live_cells(grid);   // compute final live cells
+
+    free_board(grid); // free board
+    free_board(newgrid); // free new board
+
+    end = omp_get_wtime(); // get time
+    printf("time: %f\n", end - begin); // print time
 
     return 0;
 }
@@ -65,15 +71,16 @@ int main(int argc, char **argv)
 float** allocate_board()
 {
     float ** grid;
+
     // allocate memory for the board
     grid = (float **)malloc(board_size * sizeof(float *));
+
     #pragma omp parallel for
     for (int i = 0; i < board_size; i++)
     {
         grid[i] = (float *)malloc(board_size * sizeof(float));
     }
 
-    
     return grid;
 }
 
@@ -120,40 +127,45 @@ void initialize_board(float **grid)
 
 }
 
-int get_neighbors(float **grid, int i, int j){
+// function to get number of neighbors
+int get_neighbors(float **grid, int i, int j)
+{
+    // get number of neighbors
     int number_of_neighbors = 0;
 
+    // check neighbors
     for(int k = i - 1; k <= i + 1; k++)
     {
         for(int l = j - 1; l <= j + 1; l++)
         {   
-
+            // get neighbors
             int k_aux = k;
             int l_aux = l;
 
-            if(k == i && l == j)
+            if(k == i && l == j) // skip current cell if it is not a neighbor
             {
                 continue;
             }
 
-            if(k == -1)
+            if(k == -1) // if k is -1, then k_aux is the last position of the board
             {
                 k_aux = board_size - 1;
             }
-            else if (k == board_size)
+            else if (k == board_size) // if k is board_size, then k_aux is the first position of the board
             {
                 k_aux = 0;
             }
             
-            if(l == -1){
+            if(l == -1) // if l is -1, then l_aux is the last position of the board
+            {
                 l_aux = board_size - 1;
             }
-            else if(l == board_size)
+            else if(l == board_size) // if l is board_size, then l_aux is the first position of the board
             {
                 l_aux = 0;
             }
 
-            if(grid[k_aux][l_aux] > 0.0)
+            if(grid[k_aux][l_aux] > 0.0) // if neighbor is alive, then increment number of neighbors
             {   
                 number_of_neighbors++;
             }
@@ -163,9 +175,12 @@ int get_neighbors(float **grid, int i, int j){
     return number_of_neighbors;
 }
 
-float average_neighbors_value(float** grid, int i,  int j){
+// function to get average of neighbors
+float average_neighbors_value(float** grid, int i,  int j)
+{
     float average = 0.0;
     
+    // get average of neighbors
     for(int k = i - 1; k <= i + 1; k++)
     {
         for(int l = j - 1; l <= j + 1; l++)
@@ -178,14 +193,16 @@ float average_neighbors_value(float** grid, int i,  int j){
             {
                 k_aux = board_size - 1;
             }
-            else if (k == board_size){
+            else if (k == board_size)
+            {
                 k_aux = 0;
             }
 
             if(l == -1){
                 l_aux = board_size - 1;
             }
-            else if(l == board_size){
+            else if(l == board_size)
+            {
                 l_aux = 0;
             }
             
@@ -196,11 +213,12 @@ float average_neighbors_value(float** grid, int i,  int j){
     return (float)average / (float)8.0;
 }
 
+// function to execute iterations
 void execute_iterations(float **grid , float **newgrid, int iterations)
 {
     for(int i = 0; i < iterations; i++)
     {   
-        #pragma omp parallel for collapse(2)
+        #pragma omp parallel for collapse(2) // collapse to parallelize nested for loops
         for(int j = 0; j < board_size; j++)
         {
             
@@ -236,20 +254,21 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
             }
         }
         
-        //printf("Before copy\n");
-        // copy newgrid to grid
-        //printf("After copy\n");
+        // print iteration
         printf("iteration: %d ", i);
+
+        // compute live cells
         compute_live_cells(grid);
-        // Alternar grids
+
+        // swap grids
         float** temp = grid;
         grid = newgrid;
         newgrid = temp;
-        
     }
     compute_live_cells(grid);
 }
 
+// function to compute live cells
 void compute_live_cells(float **grid)
 {
     int live_cells = 0;
@@ -267,5 +286,3 @@ void compute_live_cells(float **grid)
     printf("live cells: %d\n", live_cells); 
     return;  
 }
-
-
