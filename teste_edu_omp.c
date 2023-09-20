@@ -40,6 +40,8 @@ void initialize_board(float **grid);
 void execute_iterations(float **grid, float **newgrid, int iterations);
 void compute_live_cells(float **grid);
 int get_neighbors(float **grid, int i, int j);
+float average_neighbors_value(float **grid, int i, int j);
+void show_50_50_grid(float **grid);
 
 int main(int argc, char **argv)
 {   
@@ -264,6 +266,11 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
         float** temp = grid;
         grid = newgrid;
         newgrid = temp;
+
+        if(iterations < 5)
+        {
+            show_50_50_grid(grid);
+        }
     }
     compute_live_cells(grid);
 }
@@ -285,4 +292,25 @@ void compute_live_cells(float **grid)
     }
     printf("live cells: %d\n", live_cells); 
     return;  
+}
+
+// function to show 50x50 grid
+void show_50_50_grid(float **grid)
+{
+    for(int i = 0; i < board_size; i++)
+    {
+        for(int j = 0; j < board_size; j++)
+        {
+            if (grid[i][j] > 0.0)
+            {
+                printf("1 ");
+            }
+            else
+            {
+                printf("0 ");
+            }
+        }
+        printf("\n");
+    }
+    printf("\n");
 }
