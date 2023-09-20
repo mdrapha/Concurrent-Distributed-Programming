@@ -321,11 +321,11 @@ void show_50_50_grid(float **grid)
         {
             if (grid[i][j] > 0.0)
             {
-                printf("1 ");
+                printf("@ ");
             }
             else
             {
-                printf("0 ");
+                printf(". ");
             }
         }
         printf("\n");
