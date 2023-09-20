@@ -244,20 +244,18 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
             }
         }
         
-        //printf("Before copy\n");
-        // copy newgrid to grid
-        for(int j = 0; j < board_size; j++)
-        {
-            for(int k = 0; k < board_size; k++)
-            {
-                grid[j][k] = newgrid[j][k];
-            }
-        }
-        //printf("After copy\n");
+        // print iteration
         printf("iteration: %d ", i);
+
+        // compute live cells
         compute_live_cells(grid);
-        
-        if (i < 5)
+
+        // swap grids
+        float** temp = grid;
+        grid = newgrid;
+        newgrid = temp;
+
+        if(i < 5)
         {
             show_50_50_grid(grid);
         }
