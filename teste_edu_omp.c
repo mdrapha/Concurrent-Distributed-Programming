@@ -309,20 +309,61 @@ void compute_live_cells(float **grid)
 // function to show 50x50 grid
 void show_50_50_grid(float **grid)
 {
-    for(int i = 0; i < 50; i++)
+    for (int i = 0; i < 50; i++)
     {
-        for(int j = 0; j < 50; j++)
+        for (int j = 0; j < 50; j++)
         {
-            if (grid[i][j] > 0.0)
+            if (grid[i][j] == 0.0)
             {
-                printf("@ ");
+                printf(". ");
+            }
+            else if (grid[i][j] <= 0.0833)
+            {
+                printf(", ");
+            }
+            else if (grid[i][j] <= 0.1666)
+            {
+                printf("- ");
+            }
+            else if (grid[i][j] <= 0.25)
+            {
+                printf("~ ");
+            }
+            else if (grid[i][j] <= 0.3333)
+            {
+                printf(": ");
+            }
+            else if (grid[i][j] <= 0.4166)
+            {
+                printf("; ");
+            }
+            else if (grid[i][j] <= 0.5)
+            {
+                printf("= ");
+            }
+            else if (grid[i][j] <= 0.5833)
+            {
+                printf("! ");
+            }
+            else if (grid[i][j] <= 0.6666)
+            {
+                printf("* ");
+            }
+            else if (grid[i][j] <= 0.75)
+            {
+                printf("# ");
+            }
+            else if (grid[i][j] <= 0.8333)
+            {
+                printf("$ ");
             }
             else
             {
-                printf(". ");
+                printf("@ ");
             }
         }
         printf("\n");
     }
     printf("\n");
 }
+
