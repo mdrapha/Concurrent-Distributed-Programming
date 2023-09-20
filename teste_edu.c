@@ -246,7 +246,7 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
         printf("iteration: %d ", i);
         compute_live_cells(grid);
         
-        if (iterations < 5)
+        if (i < 5)
         {
             show_50_50_grid(grid);
         }
