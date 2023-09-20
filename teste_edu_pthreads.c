@@ -27,7 +27,7 @@
 #include <math.h>
 #include <unistd.h>
 #include <pthread.h>
-#include <omp.h>
+#include <sys/time.h>
 
 int NUM_THREADS;
 #define board_size 2048
@@ -52,28 +52,38 @@ void show_50_50_grid(float **grid);
 
 int main(int argc, char **argv)
 {   
+    struct timeval start, finish, begin, end;
+    gettimeofday(&start, NULL);
+
     // num threads = argv[1]
     NUM_THREADS = atoi(argv[1]);
 
     float **grid, **newgrid;
-    double begin, end;
-
-    begin = omp_get_wtime();
 
     grid = allocate_board();
     newgrid = allocate_board();
 
     initialize_board(grid);
 
+    gettimeofday(&begin, NULL);
+
     execute_iterations(grid, newgrid, number_of_iterations);
     compute_live_cells(grid);
+
+    gettimeofday(&end, NULL);
 
     free_board(grid);
     free_board(newgrid);
 
-    end = omp_get_wtime();
+    gettimeofday(&finish, NULL);
 
-    printf("time: %f\n", end - begin);
+    double running_time = (end.tv_sec - begin.tv_sec) +
+                     (end.tv_usec - begin.tv_usec) / 1000000.0;
+    printf("Running time: \t%f seconds\n", running_time);
+
+    double elapsed = (finish.tv_sec - start.tv_sec) +
+                     (finish.tv_usec - start.tv_usec) / 1000000.0;
+    printf("Total time: \t%f seconds\n", elapsed);
 
     return 0;
 }
