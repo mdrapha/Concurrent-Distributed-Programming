@@ -26,7 +26,7 @@
 #include <time.h>
 #include <math.h>
 #include <unistd.h>
-#include <time.h>
+#include <sys/time.h>
 
 #define board_size 2048
 #define number_of_iterations 2000
@@ -40,26 +40,37 @@ int get_neighbors(float **grid, int i, int j);
 float average_neighbors_value(float **grid, int i, int j);
 void show_50_50_grid(float **grid);
 
-
 int main(int argc, char **argv)
 {   
+    struct timeval start, finish, begin, end;
+    gettimeofday(&start, NULL);
+
     float **grid, **newgrid;
+
     grid = allocate_board();
     newgrid = allocate_board();
-    initialize_board(grid);
 
-    clock_t start_time = clock(); // initialize clock
+    initialize_board(grid);
+    
+    gettimeofday(&begin, NULL);
 
     execute_iterations(grid, newgrid, number_of_iterations);
     compute_live_cells(grid);
 
-    clock_t end_time = clock();
-
-    double execution_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-    printf("Tempo de execucao: %.5f segundos\n", execution_time);
+    gettimeofday(&end, NULL);
 
     free_board(grid);
     free_board(newgrid);
+
+    gettimeofday(&finish, NULL);
+
+    double running_time = (end.tv_sec - begin.tv_sec) +
+                     (end.tv_usec - begin.tv_usec) / 1000000.0;
+    printf("Running time: \t%f seconds\n", running_time);
+    
+    double elapsed = (finish.tv_sec - start.tv_sec) +
+                     (finish.tv_usec - start.tv_usec) / 1000000.0;
+    printf("Total time: \t%f seconds\n", elapsed);
 
     return 0;
 }
@@ -262,11 +273,11 @@ void show_50_50_grid(float **grid)
         {
             if (grid[i][j] > 0.0)
             {
-                printf("%.2f\t", grid[i][j]);
+                printf("@ ");
             }
             else
             {
-                printf("0\t");
+                printf(". ");
             }
         }
         printf("\n");
