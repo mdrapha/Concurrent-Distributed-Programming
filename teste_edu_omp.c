@@ -297,9 +297,9 @@ void compute_live_cells(float **grid)
 // function to show 50x50 grid
 void show_50_50_grid(float **grid)
 {
-    for(int i = 0; i < board_size; i++)
+    for(int i = 0; i < 50; i++)
     {
-        for(int j = 0; j < board_size; j++)
+        for(int j = 0; j < 50; j++)
         {
             if (grid[i][j] > 0.0)
             {
