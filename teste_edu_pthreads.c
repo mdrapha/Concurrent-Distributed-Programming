@@ -29,7 +29,7 @@
 #include <pthread.h>
 #include <omp.h>
 
-#define NUM_THREADS 2
+int NUM_THREADS;
 #define board_size 2048
 #define number_of_iterations 2000
 
@@ -48,9 +48,13 @@ void compute_live_cells(float **grid);
 int get_neighbors(float **grid, int i, int j);
 void* thread_work(void* args);
 float average_neighbors_value(float **grid, int i, int j);
+void show_50_50_grid(float **grid);
 
 int main(int argc, char **argv)
 {   
+    // num threads = argv[1]
+    NUM_THREADS = atoi(argv[1]);
+
     float **grid, **newgrid;
     double begin, end;
 
@@ -281,6 +285,11 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
         float** temp = grid;
         grid = newgrid;
         newgrid = temp;
+
+        if(iterations < 5)
+        {
+            show_50_50_grid(grid);
+        }
     }
     compute_live_cells(grid);
 }
@@ -303,4 +312,23 @@ void compute_live_cells(float **grid)
     return;  
 }
 
-
+// function to show the board
+void show_50_50_grid(float **grid)
+{
+    for(int i = 0; i < board_size; i++)
+    {
+        for(int j = 0; j < board_size; j++)
+        {
+            if (grid[i][j] > 0.0)
+            {
+                printf("1 ");
+            }
+            else
+            {
+                printf("0 ");
+            }
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
