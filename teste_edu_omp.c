@@ -26,6 +26,7 @@
 #include <time.h>
 #include <math.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 // Including OpenMP for parallelization
 #include <omp.h>
@@ -45,26 +46,37 @@ void show_50_50_grid(float **grid);
 
 int main(int argc, char **argv)
 {   
+    struct timeval start, finish, begin, end;
+    gettimeofday(&start, NULL);
+
     omp_set_nested(1);
 
     float **grid, **newgrid; // board and new board
-    double begin, end; // time variables
-
-    begin = omp_get_wtime(); // get time
 
     grid = allocate_board(); // allocate board 
     newgrid = allocate_board(); // allocate new board
 
     initialize_board(grid); // initialize board
 
+    gettimeofday(&begin, NULL);
+
     execute_iterations(grid, newgrid, number_of_iterations); // execute iterations
     compute_live_cells(grid);   // compute final live cells
+
+    gettimeofday(&end, NULL);
 
     free_board(grid); // free board
     free_board(newgrid); // free new board
 
-    end = omp_get_wtime(); // get time
-    printf("time: %f\n", end - begin); // print time
+    gettimeofday(&finish, NULL);
+
+    double running_time = (end.tv_sec - begin.tv_sec) +
+                     (end.tv_usec - begin.tv_usec) / 1000000.0;
+    printf("Running time: \t%f seconds\n", running_time);
+
+    double elapsed = (finish.tv_sec - start.tv_sec) +
+                     (finish.tv_usec - start.tv_usec) / 1000000.0;
+    printf("Total time: \t%f seconds\n", elapsed);
 
     return 0;
 }
@@ -303,11 +315,11 @@ void show_50_50_grid(float **grid)
         {
             if (grid[i][j] > 0.0)
             {
-                printf("1 ");
+                printf("@ ");
             }
             else
             {
-                printf("0 ");
+                printf(". ");
             }
         }
         printf("\n");
