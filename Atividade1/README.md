@@ -30,10 +30,36 @@ When a new cell is born, its value (or color intensity) is determined by the ari
 - The coordinate (0,0) refers to the upper-left corner, while (N-1,N-1) refers to the lower-right corner.
 - Any cell with a value greater than 0.0 is considered alive.
 
-## Contribution
+## Running the Program
 
-For any updates or modifications, feel free to make pull requests or raise issues. This project welcomes contributions from the community.
+### Requirements for the C version
 
----
+- GCC compiler
+- openMP library
+- pthread library
+
+### Serial Version
+
+To run the serial version of the program, simply run the following command:
+
+```bash
+$ gcc serial.c -o serial 
+$ ./serial
+```
+
+### OpenMP Version
+```bash
+$ gcc openmp.c -o openmp -fopenmp
+$ ./openmp
+```
+
+### Pthread Version
+```bash
+$ gcc pthread.c -o pthread -pthread
+$ ./pthread
+```
+
+
+--- 
 
 _**Note:** This project is inspired by the original Conway's Game of Life, but introduces new dynamics and rules._
