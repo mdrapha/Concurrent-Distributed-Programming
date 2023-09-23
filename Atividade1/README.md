@@ -37,6 +37,7 @@ When a new cell is born, its value (or color intensity) is determined by the ari
 - GCC compiler
 - openMP library
 - pthread library
+- Linux OS is recommended
 
 ### Serial Version
 
@@ -55,10 +56,14 @@ $ ./openmp
 
 ### Pthread Version
 ```bash
-$ gcc pthread.c -o pthread -pthread
+$ gcc pthread.c -o pthread -lpthread
 $ ./pthread
 ```
 
+### OpenGL Visualizer Version
+```bash
+$ gcc graphic_rainbowl_life_game.c -o graphic -lGL -lGLU -lglut -lm -fopenmp 
+```
 
 --- 
 
