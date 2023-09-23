@@ -57,7 +57,7 @@ $ ./openmp
 ### Pthread Version
 ```bash
 $ gcc pthread.c -o pthread -lpthread
-$ ./pthread
+$ ./pthread <number of threads>
 ```
 
 ### OpenGL Visualizer Version
