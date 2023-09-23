@@ -63,6 +63,7 @@ $ ./pthread
 ### OpenGL Visualizer Version
 ```bash
 $ gcc graphic_rainbowl_life_game.c -o graphic -lGL -lGLU -lglut -lm -fopenmp 
+$ ./graphic
 ```
 
 --- 
