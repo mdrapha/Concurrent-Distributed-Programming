@@ -1,25 +1,13 @@
-// rainbow game of life created by: john h conway
-
-// bidimensional board of cells (1 or 0)
-// 1 = alive
-// 0 = dead
-
-// rules:
-// A. any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
-// B. any live cell with two or three live neighbours lives on to the next generation.
-// C. any live cell with more than four live neighbours dies, as if by overpopulation.
-// D. any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-
-// 1. any live cell with two or three live neighbours survives.
-// 2. any dead cell with three live neighbours becomes a live cell.
-// 3. all other live cells die in the next generation. similarly, all other dead cells stay dead.
-
-// new live cells must have the arithmetical average of the immediate neighbours
-// board must be floating point
-
-// board NxN with infinite boundaries
-// (0,0) is the upper left corner and (N-1,N-1) is the lower right corner
-// live cell has value greater than 0.0
+/*
+ * Pthreads implementation of the Game of Life
+ *
+ * Authors: Eduardo Verissimo Faccio - 148859 
+ *          Marco Antonio Coral dos Santos - 158467
+ *          Raphael Damasceno Rocha de Moraes - 156380
+ * 
+ * Professor: Alvaro Luiz Fazenda
+ * 
+ * */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,29 +41,37 @@ void show_50_50_grid(float **grid);
 int main(int argc, char **argv)
 {   
     struct timeval start, finish, begin, end;
-    gettimeofday(&start, NULL);
+    gettimeofday(&start, NULL); // start time of the program
 
-    // num threads = argv[1]
+    if(argc != 2)
+    {
+        printf("Usage: %s <number of threads>\n", argv[0]);
+        exit(1);
+    }
+
+    // The number of threads is passed as an argument to the program
     NUM_THREADS = atoi(argv[1]);
 
     float **grid, **newgrid;
 
+    // allocate memory for the board
     grid = allocate_board();
     newgrid = allocate_board();
 
-    initialize_board(grid);
+    initialize_board(grid); // initialize board
 
-    gettimeofday(&begin, NULL);
+    gettimeofday(&begin, NULL); // start time of the algorithm
 
-    execute_iterations(grid, newgrid, number_of_iterations);
-    compute_live_cells(grid);
+    execute_iterations(grid, newgrid, number_of_iterations); // execute iterations
+    compute_live_cells(grid); // compute live cells at the end of the program
 
-    gettimeofday(&end, NULL);
+    gettimeofday(&end, NULL); // end time of the algorithm
 
+    // free memory for the board
     free_board(grid);
     free_board(newgrid);
 
-    gettimeofday(&finish, NULL);
+    gettimeofday(&finish, NULL); // end time of the program
 
     double running_time = (end.tv_sec - begin.tv_sec) +
                      (end.tv_usec - begin.tv_usec) / 1000000.0;
@@ -283,12 +279,13 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
             thread_data[t].grid = grid;
             thread_data[t].newgrid = newgrid;
 
-            pthread_create(&threads[t], NULL, thread_work, &thread_data[t]);
+            pthread_create(&threads[t], NULL, thread_work, &thread_data[t]); // create the threads
         }
 
+        // wait for all the threads to finish
         for (int t = 0; t < NUM_THREADS; t++) 
         {
-            pthread_join(threads[t], NULL);
+            pthread_join(threads[t], NULL); 
         }
 
         compute_live_cells(grid);
@@ -304,7 +301,6 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
     compute_live_cells(grid);
 }
 
-// function to compute live cells
 void compute_live_cells(float **grid)
 {
     int live_cells = 0;
@@ -322,7 +318,6 @@ void compute_live_cells(float **grid)
     return;  
 }
 
-// function to show the board
 void show_50_50_grid(float **grid)
 {
     for(int i = 0; i < 50; i++)

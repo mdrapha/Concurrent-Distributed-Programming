@@ -1,25 +1,13 @@
-// rainbow game of life created by: john h conway
-
-// bidimensional board of cells (1 or 0)
-// 1 = alive
-// 0 = dead
-
-// rules:
-// A. any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
-// B. any live cell with two or three live neighbours lives on to the next generation.
-// C. any live cell with more than four live neighbours dies, as if by overpopulation.
-// D. any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-
-// 1. any live cell with two or three live neighbours survives.
-// 2. any dead cell with three live neighbours becomes a live cell.
-// 3. all other live cells die in the next generation. similarly, all other dead cells stay dead.
-
-// new live cells must have the arithmetical average of the immediate neighbours
-// board must be floating point
-
-// board NxN with infinite boundaries
-// (0,0) is the upper left corner and (N-1,N-1) is the lower right corner
-// live cell has value greater than 0.0
+/*
+ * Using OpenGL to see the results of the Game of Life
+ *
+ * Authors: Eduardo Verissimo Faccio - 148859 
+ *          Marco Antonio Coral dos Santos - 158467
+ *          Raphael Damasceno Rocha de Moraes - 156380
+ * 
+ * Professor: Alvaro Luiz Fazenda
+ * 
+ * */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,6 +30,7 @@ int borderSize = 10;  // Tamanho da borda
 int barHeight = 30;  // Altura da barra superior
 int iteration = 0;  // Contador de iterações
 float **grid, **newgrid;
+
 // function declarations
 float** allocate_board();
 void free_board(float **grid);
