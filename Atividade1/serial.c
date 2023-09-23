@@ -1,25 +1,13 @@
-// rainbow game of life created by: john h conway
-
-// bidimensional board of cells (1 or 0)
-// 1 = alive
-// 0 = dead
-
-// rules:
-// A. any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
-// B. any live cell with two or three live neighbours lives on to the next generation.
-// C. any live cell with more than four live neighbours dies, as if by overpopulation.
-// D. any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-
-// 1. any live cell with two or three live neighbours survives.
-// 2. any dead cell with three live neighbours becomes a live cell.
-// 3. all other live cells die in the next generation. similarly, all other dead cells stay dead.
-
-// new live cells must have the arithmetical average of the immediate neighbours
-// board must be floating point
-
-// board NxN with infinite boundaries
-// (0,0) is the upper left corner and (N-1,N-1) is the lower right corner
-// live cell has value greater than 0.0
+/*
+ * Serial implementation of the Game of Life
+ *
+ * Authors: Eduardo Verissimo Faccio - 148859 
+ *          Marco Antonio Coral dos Santos - 158467
+ *          Raphael Damasceno Rocha de Moraes - 156380
+ * 
+ * Professor: Alvaro Luiz Fazenda
+ * 
+ * */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,6 +16,8 @@
 #include <unistd.h>
 #include <sys/time.h>
 
+
+// Constants of the program
 #define board_size 2048
 #define number_of_iterations 2000
 
@@ -43,26 +33,29 @@ void show_50_50_grid(float **grid);
 int main(int argc, char **argv)
 {   
     struct timeval start, finish, begin, end;
-    gettimeofday(&start, NULL);
+    
+    gettimeofday(&start, NULL); // start time of the program
 
     float **grid, **newgrid;
 
+    // allocate memory for the board 
     grid = allocate_board();
     newgrid = allocate_board();
 
-    initialize_board(grid);
+    initialize_board(grid); // initialize board
     
-    gettimeofday(&begin, NULL);
+    gettimeofday(&begin, NULL); // start time of the algorithm
 
-    execute_iterations(grid, newgrid, number_of_iterations);
-    compute_live_cells(grid);
+    execute_iterations(grid, newgrid, number_of_iterations); // execute iterations
+    compute_live_cells(grid); // compute live cells at the end of the program
 
-    gettimeofday(&end, NULL);
+    gettimeofday(&end, NULL); // end time of the algorithm
 
-    free_board(grid);
+    // free memory for the board
+    free_board(grid); 
     free_board(newgrid);
 
-    gettimeofday(&finish, NULL);
+    gettimeofday(&finish, NULL); // end time of the program
 
     double running_time = (end.tv_sec - begin.tv_sec) +
                      (end.tv_usec - begin.tv_usec) / 1000000.0;
@@ -75,11 +68,11 @@ int main(int argc, char **argv)
     return 0;
 }
 
-// function to allocate board
+
 float** allocate_board()
 {
     float ** grid;
-    // allocate memory for the board
+    
     grid = (float **)malloc(board_size * sizeof(float *));
     for (int i = 0; i < board_size; i++)
     {
@@ -90,7 +83,7 @@ float** allocate_board()
     return grid;
 }
 
-// function to free board
+
 void free_board(float **grid)
 {
     // free memory for the board
@@ -101,7 +94,7 @@ void free_board(float **grid)
     free(grid);
 }
 
-// function to initialize board
+
 void initialize_board(float **grid)
 {   
     printf("initializing board...\n");
@@ -141,28 +134,31 @@ int get_neighbors(float **grid, int i, int j){
             int k_aux = k;
             int l_aux = l;
 
-            if(k == i && l == j)
+            if(k == i && l == j) // skip the cell itself
             {
                 continue;
             }
-
-            if(k == -1)
+            
+            // if the cell is in the border, get the value from the other side
+            if(k == -1) // if the cell is in the upper border
             {
                 k_aux = board_size - 1;
             }
-            else if (k == board_size)
+            else if (k == board_size) // if the cell is in the lower border
             {
                 k_aux = 0;
             }
             
-            if(l == -1){
+            if(l == -1) // if the cell is in the left border
+            { 
                 l_aux = board_size - 1;
             }
-            else if(l == board_size)
+            else if(l == board_size) // if the cell is in the right border
             {
                 l_aux = 0;
             }
 
+            // if the cell is alive, add to the number of neighbors
             if(grid[k_aux][l_aux] > 0.0)
             {   
                 number_of_neighbors++;
@@ -184,6 +180,7 @@ float average_neighbors_value(float** grid, int i,  int j){
             int k_aux = k;
             int l_aux = l;
 
+            // same idea as get_neighbors function
             if(k == -1)
             {
                 k_aux = board_size - 1;
@@ -215,10 +212,10 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
             for(int k = 0; k < board_size; k++)
             {
                 
-                // get neighbors
+                // get the number of neighbors of the cell
                 int number_of_neighbors = get_neighbors(grid, j, k);
 
-
+                // apply the rules of the game
                 if(grid[j][k] > 0.0)
                 {
                     if(number_of_neighbors == 2 || number_of_neighbors == 3)
@@ -250,11 +247,12 @@ void execute_iterations(float **grid , float **newgrid, int iterations)
         // compute live cells
         compute_live_cells(grid);
 
-        // swap grids
+        // swap grids for the next iteration
         float** temp = grid;
         grid = newgrid;
         newgrid = temp;
 
+        // show 50x50 grid for the first 5 iterations
         if(i < 5)
         {
             show_50_50_grid(grid);
