@@ -1,48 +1,63 @@
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <omp.h>
+#include <unistd.h>
 
-#define NUM_ITERATIONS 1000000000
+int SOMA = 0;
+int turn = 0;
+int *interested;
 
-int SOMA = 0; // Variável global compartilhada
+void secao_critica(int id) {
+    int local = SOMA;
+    sleep(rand() % 2);
+    SOMA = local + 1;
+    printf("Thread %d na seção crítica. SOMA = %d\n", id+1, SOMA);
+}
 
-int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        printf("Uso: %s <num_threads>\n", argv[0]);
+void remainder(int id) {
+    printf("Thread %d na seção restante.\n", id+1);
+}
+
+void manna_pnueli(int id, int N) {
+    for (int i = 0; i < N; i++) {
+        interested[id] = 1;
+        while (interested[1 - id]) {
+            if (turn != id) {
+                interested[id] = 0;
+                while (turn != id) {}
+                interested[id] = 1;
+            }
+        }
+        secao_critica(id);
+        turn = 1 - id;
+        interested[id] = 0;
+        remainder(id);
+    }
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        printf("Uso: %s <Número de Threads> <Valor de N>\n", argv[0]);
         return 1;
     }
 
     int num_threads = atoi(argv[1]);
-    if (num_threads <= 0) {
-        printf("O número de threads deve ser maior que 0.\n");
+    int N = atoi(argv[2]);
+
+    if (num_threads < 2 || N <= 0) {
+        printf("Número de threads deve ser pelo menos 2 e N deve ser maior que 0.\n");
         return 1;
     }
 
-    int i;
+    interested = (int *)malloc(num_threads * sizeof(int));
 
-    omp_set_num_threads(num_threads);
-
-    #pragma omp parallel private(i)
+    #pragma omp parallel num_threads(num_threads)
     {
-        int thread_id = omp_get_thread_num();
-        int local_sum = 0;
-
-        #pragma omp for
-        for (i = 0; i < NUM_ITERATIONS; i++) {
-            #pragma omp critical
-            {
-                int local = SOMA;
-                SOMA = local + 1;
-            }
-        }
-
-        #pragma omp critical
-        {
-            printf("Thread %d: Local sum = %d\n", thread_id, local_sum);
-        }
+        int id = omp_get_thread_num();
+        manna_pnueli(id, N);
     }
 
-    printf("Resultado final da variável SOMA: %d\n", SOMA);
+    free(interested);
 
     return 0;
 }
