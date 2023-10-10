@@ -1,0 +1,4 @@
+running: 	624.896645 seconds
+total: 	624.959000 seconds
+
+

@@ -37,6 +37,7 @@ int main(int argc, char **argv)
     gettimeofday(&start, NULL);
 
     omp_set_nested(1);
+    printf("Número máximo de threads: %d\n", omp_get_max_threads());
 
     float **grid, **newgrid; // board and new board
 
@@ -59,11 +60,11 @@ int main(int argc, char **argv)
 
     double running_time = (end.tv_sec - begin.tv_sec) +
                           (end.tv_usec - begin.tv_usec) / 1000000.0;
-    printf("Running time: \t%f seconds\n", running_time);
+    printf("running: \t%f seconds\n", running_time);
 
     double elapsed = (finish.tv_sec - start.tv_sec) +
                      (finish.tv_usec - start.tv_usec) / 1000000.0;
-    printf("Total time: \t%f seconds\n", elapsed);
+    printf("total: \t%f seconds\n", elapsed);
 
     return 0;
 }
