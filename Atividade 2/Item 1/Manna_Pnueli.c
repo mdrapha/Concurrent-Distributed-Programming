@@ -22,11 +22,17 @@ void manna_pnueli(int id, int N) {
     for (int i = 0; i < N; i++) {
         interested[id] = 1;
         while (interested[1 - id]) {
-            if (turn != id) {
-                interested[id] = 0;
-                while (turn != id) {}
-                interested[id] = 1;
+            while (interested[1 - id]) {
+                while (turn != id) {
+                    if (turn != id) {
+                        interested[id] = 0;
+                        while (turn != id) {}
+                        interested[id] = 1;
+                    }
+                }  
             }
+
+            
         }
         secao_critica(id);
         turn = 1 - id;
