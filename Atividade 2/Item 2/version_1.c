@@ -274,12 +274,11 @@ void execute_iterations(float **grid, float **newgrid, int iterations)
 void compute_live_cells(float **grid)
 {
     int live_cells = 0;
-#pragma omp parallel for reduction(+ : live_cells)
+#pragma omp critical
     for (int i = 0; i < board_size; i++)
     {
         for (int j = 0; j < board_size; j++)
         {
-#pragma omp critical
             if (grid[i][j] > 0.0)
             {
                 live_cells++;
