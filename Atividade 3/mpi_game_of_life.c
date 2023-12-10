@@ -175,12 +175,9 @@ void execute_iterations(float **grid, float **newgrid, int start_row, int rows, 
         grid = newgrid;
         newgrid = temp;
 
-        // Optionally compute and print the number of live cells for debugging
         // Lets just the rank 0 process do it
         if (rank == 0)
         compute_live_cells(grid, rows);
 
-        // Optional: synchronization point (if needed)
-        // MPI_Barrier(MPI_COMM_WORLD);
     }
 }
